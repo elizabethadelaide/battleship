@@ -1,5 +1,5 @@
-#Test of function
 .data
+
 #String helpers
 newline: .asciiz "\n"
 space: .asciiz " "
@@ -20,6 +20,7 @@ computerWins: .asciiz "Computer Wins\n"
 playerWins: .asciiz "Player Wins\n"
 leftColumnHelper: .asciiz ": |"
 enterRandomSeed: .asciiz "Please enter random seed: "
+
 #Array data
 size: .word 400
 playerboard: .space 400
@@ -33,31 +34,9 @@ m_z: .space 4 #the other random seeds
 
 userresponse: .space 12
 
-#Break Code
-# li $v0, 4
-# la $a0, computerWins
-# syscall
-# li $v0, 12
-#syscall
-#add $s5, $ra, $0
-#add $a0, $s0, $0
-#add $a1, $s0, $0
-#jal PRINTBOARD
-#add $ra, $s5, $ra
-# li $v0, 4
-# la $a0, computerWins
-# syscall
-# li $v0, 12
-#syscall
-#add $ra, $s5, $0
-
-
-
 .text
 main:
 	#Intitialise random number generator
-#	li $v0, 30 Our simulator cannot query system time, so I'll ask for a user input
-#	syscall
 	la $a0, enterRandomSeed
 	li $v0, 4
 	syscall
@@ -68,14 +47,13 @@ main:
 	sw $a0, 0($t0)
 	li $v0, 1
 	syscall #print integer
-#	li $v0, 30
-#	syscall
+
 	li $v0, 4
 	la $a0, newline
 	syscall #print new line
 	li $v0, 4
 	la $a0, enterRandomSeed
-	syscall #Read second see
+	syscall #Read second seed
 	li $v0, 5
 	syscall
 	add $a0, $v0, $0
@@ -89,8 +67,6 @@ main:
 	la $s2, playershots
 	la $s3, computershots
 
-	#Set random seed:
-	
 	#Get argument for fillboard
 	#Fill playerboard
 	add $a0, $s0, $0
@@ -111,20 +87,20 @@ main:
 	#Place ships for computerboard
 	add $a0, $s1, $0
 	jal PLACESHIPS
-	
-	add $s8, $0, $0	
+
+	add $s8, $0, $0
 add $a0, $s0, $0
 add $a1, $s2, $0
 add $s5, $ra, $0
 jal PRINTBOARD
 add $ra, $s5, $0
-	#Get Player's turn order	
+	#Get Player's turn order
 	USERTURNLOOP:
 		addi $t1, $0, 121 #Ascii value for 'y'
 		beq $t1, $s8, USERTURNEXIT #if userResponse = 'y'
 		addi $t1, $0, 110 #ascii value for 'n'
 		beq $t1, $s8, USERTURNEXIT #if userResponse = 'n'
-		#primt prompt
+		#print prompt
 		li $v0, 4
 		la $a0, userturn #load prompt
 		syscall
@@ -137,7 +113,7 @@ add $ra, $s5, $0
 		add $a0, $s8, $0
 		syscall
 		#Print new line
-		li $v0, 4 
+		li $v0, 4
 		la $a0, newline
 		syscall
 		j USERTURNLOOP
@@ -148,7 +124,7 @@ add $ra, $s5, $0
 	mfhi $s4 #get turn input
 
 	addi $s8, $0, -1  #previousHit = -1
-	
+
 	add $s5, $0, $0 #set winFlag to 0
 	WINFLAGLOOP:
 		bne $s5, $0, WINFLAGEXIT #While winflag == 0
@@ -185,7 +161,7 @@ add $ra, $s5, $0
 				add $a1, $s8, $0 #arg[1] = previousHit
 				jal GETCOMPUTERCOORDINATES #getComputerCoordinates(computershots, previousHit);
 				la $t0, computerCoordinates #Get word in memory
-				sw $v0, 0($t0) #Save previous hit in memory			
+				sw $v0, 0($t0) #Save previous hit in memory
 				add $a0, $s0, $0 #arg[0] = playerboard
 				add $a1, $s3, $0 #arg[1] = computerShots
 				add $a2, $v0, $0 #arg[2] = computerCoordinates
@@ -237,55 +213,14 @@ add $ra, $s5, $0
 		FINALEXIT:
 			li $v0, 10 #equiv of return 0;
 			syscall
-			
-
-# I don't know why I wrote this:
-#			NUMBERTURNSREALLYCONTINUE:
-#				bne $s5, $0, NUMBERTURNSEXIT #on numberofturns < 2 && winFlag == 0
-#				j NUMBERTURNSREALLYCONTINUE
-#			NUMBERTURNSEXIT:
 
 
-	#for (i = 0; i < 100; i++)
-	# if i % 10 = 0{ printf("%i\n", array[i]);}
-	# else{ printf("%i ", array[i]);}
-#	add $t1, $0, $0 #i = 0
-#	addi $t2, $t1, -99 #i - 99
-#	addi $t3, $0, 10 #t3 = 0
-#PRINTLOOP:
-#	beq $0, $t2, PRINTEXIT
-#	sll $t4, $t1, 2 #get correct offset
-#	add $t5, $t4, $s0 #array[i]
-#	lw $a0, 0($t5)
-#	li $v0, 1
-#	syscall
-#	div $t1, $t3 #i/10
-#	mfhi $t4 #$t4 = t2%t3
-#	addi $t4, $t4, -9 #if t4 == 9
-#	addi $t1, $t1, 1 #i++
-#	addi $t2, $t1, -100 #
-#	beq $t4, $0, PRINTEQUALSZERO
-#	j PRINTDOESNOTEQUALZERO
-#	PRINTEQUALSZERO:
-#		la $a0, newline
-#		li $v0, 4
-#		syscall
-#		j PRINTLOOP
-#	PRINTDOESNOTEQUALZERO:
-#		la $a0, space
-#		li $v0, 4
-#		syscall
-#		j PRINTLOOP	
-#PRINTEXIT:
-#	li $v0, 10
-#	syscall
-#	
-	
-	
+
+#various functions:
 
 FILLBOARD:
 	addi $sp, $sp, -4
-	sw $s0, 0($sp) 
+	sw $s0, 0($sp)
 	#mv $t0, $a0 #Get argument to better register]
 	add $t0, $a0, $0
 	add $t1, $0, $0 #Get fill number
@@ -325,7 +260,7 @@ PLACEPLAYERSHIPS:
 		PLACEPLAYERSHIPSKLOOP:
 			beq $0, $s1, PLACEPLAYERSHIPSKEXIT #while k!=0
 			la $a0, userPlaceCoordinates
-			li $v0, 4 
+			li $v0, 4
 			syscall #Print place coordinates prompt
 			#Calculate length:
 			addi $t0, $0, 2
@@ -336,7 +271,7 @@ PLACEPLAYERSHIPS:
 			li $v0, 1
 			add $a0, $t1, $0
 			syscall #print ship's name
-			li $v0, 12 
+			li $v0, 12
 			#Get user coordinates:
 			syscall #Read character
 			add $t0, $v0, $0
@@ -345,7 +280,7 @@ PLACEPLAYERSHIPS:
 			syscall #print character
 			li $v0, 12
 			syscall
-			add $t1, $v0, $0 
+			add $t1, $v0, $0
 			add $a0, $v0, $0
 			li $v0, 11
 			syscall #print second character
@@ -396,7 +331,7 @@ PLACEPLAYERSHIPS:
 			add $a0, $s1, $0 #k
 			add $a1, $t1, $0 #orienctiona
 			add $a2, $t0, $0 #position
-			add $a3, $s3, $0 #length 
+			add $a3, $s3, $0 #length
 	#		add $a3, $s2, $0 #me Board, passed implicitly:
 			add $s4, $ra, $0 #save return address
 			jal TRYDIRECTION
@@ -424,55 +359,10 @@ PLACEPLAYERSHIPS:
 			#get user input
 			#convert user input
 		#trydirection
-	
+
 
 RANDNUMBER:
-#Just the given random number generator
-#add $t0, $0, $a0
-#add $t5, $0, 1000
-##li $v0, 5
-##syscall
-#add $a0, $0, $t0
-#M_w:
-#la $t0, m_w
-#lw $t0, 0($t0)
-#andi $t2, $t0, 65535
-#add $t3, $0, 36969
-#mult $t2, $t3
-#mflo $t2
-#srl $t3, $t0, 16
-#add $t4, $t2, $t3
-##beq $t2, $t4, M_w
-#div $t4, $t5
-#mfhi $t4
-#la $t0, m_w
-#sw $t4, 0($t0)
-#
-#add $t5, $0, 999
-#M_z:
-#la $t1, m_z
-#lw $t1, 0($t1)
-#andi $t2, $t1, 65535
-#add $t3, $0, 18000
-#mult $t2, $t3
-#mflo $t2
-#srl $t3, $t1, 16
-#add $t4, $t2, $t3
-##beq $t2, $t4, M_z
-#div $t4, $t5
-#mfhi $t4
-#
-#la $t0, m_z
-#sw $t4, 0($t0)
-#sll $t3, $t1, 16
-#add $t2, $t3, $t0
-#sub $t0, $a0, $a1 #Max - min
-#div $t2, $t0
-#mfhi $t2
-#add $t2, $t2, $a1
-##return values to address
-#add $v0, $t2, $0
-#jr $ra	
+	#summary of algorithm:
 	#m_z = (36969 *(m_z & 65535) + (m_z >> 16))%32768
 	la $t0, m_z
 	lw $t3, 0($t0)
@@ -493,8 +383,8 @@ RANDNUMBER:
 	subu $t0, $a0, $a1
 	divu $t1, $t0
 	mfhi $t1
-	addu $v0, $a1, $t1		
-	jr $ra	
+	addu $v0, $a1, $t1
+	jr $ra
 
 PLACESHIPS:
 	#Push stack
@@ -510,7 +400,7 @@ PLACESHIPS:
 	add $s0, $a0, 0
 	#for (length = 5; length >= 2; length--){
 	addi $s1, $0, 5 #length = 5
-	
+
 	PLACESHIPSLENGTHLOOP:
 		addi $t0, $s1, -1
 		beq $t0, $0, PLACESHIPSLENGTHEXIT #on length < 1
@@ -528,7 +418,7 @@ PLACESHIPS:
 			jal RANDNUMBER #orientation = RANDNUMBER(3,0)
 			add $s4, $v0, $0 #get value of orientiation
 			add $ra, $s5, $0 #get back return address
-			
+
 			addi $s2, $0, 1 #k = 1
 			PLACESHIPSTRYDIRECTIONLOOP:
 				beq $s2, $0, PLACESHIPSTRYDIRECTIONEXIT #k == 0
@@ -572,9 +462,9 @@ TRYDIRECTION:
 	sw $s1, 4($sp)
 	addi $t0, $0, 4
 	div $a1, $t0
-	mfhi $a1 #ori = ori %4	
+	mfhi $a1 #ori = ori %4
 
-	#Imma use straight arguments, see how that works
+	#I use straight arguments, see how that works
 	#for(i = 0; i < length; i++)
 	add $t0, $0, $0 #i = 0
 	TRYDIRECTIONLOOP:
@@ -589,7 +479,7 @@ TRYDIRECTION:
 		addi $t2, $0, 10
 		mult $t1, $t2 #i*(ori%2)*10
 		mflo $t1 #get product
-		
+
 		addi $t2, $0, 2
 		div  $a1, $t2 #ori/2
 		mfhi $t2 #ori%2
@@ -597,7 +487,7 @@ TRYDIRECTION:
 		mult $t0, $t2 #i*((ori%2)-1)
 		mflo $t2 #get product
 		add $t1, $t1, $t2 #offset
-		
+
 		addi $t2, $a1, -1
 		bgtz $t2, TRYDIRECTIONDONTSWITCH
 		TRYDIRECTIONSWITCH:
@@ -657,7 +547,7 @@ TRYDIRECTION:
 	add $t0, $0, $0 #i = 0
 	TRYDIRECTIONWRITELOOP:
 		beq $t0, $a3, TRYDIRECTIONWRITEEXIT
-		
+
 		#calculate offset:
 		addi $t1, $0, 2
 		div $a1, $t1 #ori/2
@@ -667,7 +557,7 @@ TRYDIRECTION:
 		addi $t2, $0, 10
 		mult $t1, $t2 #i*(ori%2)*10
 		mflo $t1 #get product
-		
+
 		addi $t2, $0, 2
 		div  $a1, $t2 #ori/2
 		mfhi $t2 #ori%2
@@ -675,7 +565,7 @@ TRYDIRECTION:
 		mult $t0, $t2 #i*((ori%2)-1)
 		mflo $t2 #get product
 		add $t1, $t1, $t2 #offset
-		
+
 		addi $t2, $a1, -1
 		bgtz $t2, TRYDIRECTIONWRITEDONTSWITCH
 		TRYDIRECTIONWRITESWITCH:
@@ -698,14 +588,14 @@ TRYDIRECTION:
 		lw $s0, 0($sp)
 		lw $s1, 4($sp)
 		addi $sp, $sp, 8
-	
+
 		add $v0, $a0, 0
 		jr $ra #return iteration
 
 #gets user inputs and outputs number on array
 USERCOORDINATES:
 	#PUSH Stack #No stack pushing
-	
+
 	#Print prompt
 	li $v0, 4
 	la $a0, userprompt
@@ -751,7 +641,7 @@ PRINTBOARD: #Print Horizantally
 	#printf("	0 1 2 3 4 5 6 7 8 9	0 1 2 3 4 5 6 7 8 9");
 	li $v0, 4
 	la $a0 toprow
-	syscall	
+	syscall
 	#For (k = 0; k < 10; k++){ #Each row
 	add $t1, $0, $0 #k = 0
 	PRINTBOARDKLOOP:
@@ -765,7 +655,7 @@ PRINTBOARD: #Print Horizantally
 		add $t2, $0, $0 #n = 0
 		PRINTBOARDNLOOP:
 			addi $t0, $0, 2
-			beq $t2, $t0, PRINTBOARDNEXIT	
+			beq $t2, $t0, PRINTBOARDNEXIT
 			#Choose board to print
 			beq $t2, $0, PRINTBOARDLEFTBOARD
 			j PRINTBOARDRIGHTBOARD
@@ -804,8 +694,8 @@ PRINTBOARD: #Print Horizantally
 					#printf("  ");
 					li $v0, 4
 					la $a0, twospaces
-					syscall	
-					j PRINTBOARDPRINTEXIT			
+					syscall
+					j PRINTBOARDPRINTEXIT
 				#else
 				PRINTBOARDPRINTNUMBER:
 				#printf"%i ", myShots[n]);
@@ -814,7 +704,7 @@ PRINTBOARD: #Print Horizantally
 					syscall
 					li $v0, 4
 					la $a0, space
-					syscall	
+					syscall
 					j PRINTBOARDPRINTEXIT
 				PRINTBOARDPRINTEXIT:
 				addi $t3, $t3, 1
@@ -835,7 +725,7 @@ PRINTBOARD: #Print Horizantally
 	lw $s2, 8($sp)
 	addi $sp, $sp, 12
 	jr $ra
-				
+
 CHECKWIN:
 	addi $t1, $0, 100 # $t1 = 100
 	add $t0, $0, $0 # i = 0
@@ -865,8 +755,8 @@ CHECKWIN:
 			j CHECKWINEXIT
 		CHECKWINEXIT:
 		jr $ra #Return to main
-		
-		
+
+
 CHECKHIT:								#need 5 registers for printf statements, have to push stack
 	addi $sp, $sp, -12
 	sw $s0, 0($sp)
@@ -875,18 +765,18 @@ CHECKHIT:								#need 5 registers for printf statements, have to push stack
 #li $v0, 5
 #syscall
 	add $s1, $a0, $0
-	
+
 	add $s0, $a0, $0
 	add $t0, $0, $0 # n = 0
 	sll $t1, $a2, 2
-	add $t1, $a0, $t1 
+	add $t1, $a0, $t1
 	lw $t1, 0($t1)						#loading herBoard into t1
 	sll $t2, $a2, 2
 	add $t2, $a1, $t2
 	lw $s2, 0($t2)						#loading myBoard into t2
 	addi $s0, $t1, 0				#herBoard[myCoordinates]-1
 	addi $t3, $0, 2						#t3 = 2
-	div  $t1, $t3 #ori/2				 
+	div  $t1, $t3 #ori/2
 	mfhi $t3 #ori%2						#t3 = herBoard[myCoordinates]%2
 	beq $t1, $0, CHECKHITNOHIT 			#herBoard[myCoordinates] == 0
 	j CHECKHITMAYBE
@@ -911,20 +801,20 @@ CHECKHIT:								#need 5 registers for printf statements, have to push stack
 			la $a0, computer
 			syscall
 			j CHECKHITPRINTMISS
-		CHECKHITPRINTMISS:				
+		CHECKHITPRINTMISS:
 		#printf(miss)
 			li $v0, 4
 			la $a0, miss
 			syscall
-			add $v0, $0, 1	
-			j CHECKHITEXIT	
-		CHECKHITMAYBE:					
+			add $v0, $0, 1
+			j CHECKHITEXIT
+		CHECKHITMAYBE:
 			beq $t3, $0, CHECKHITHIT			#herBoard[myCoordinates]%2 == 0
 			j CHECKHITELSE
 		CHECKHITHIT:
 			addi $t1, $t1, 1					#herBoard[myCoordinates]++
 			sll $t4, $a2, 2
-			add $t4, $s1, $t4 
+			add $t4, $s1, $t4
 			sw $t1, 0($t4)						#loading herBoard into t1
 	add $t2, $a1, $a2
 			addi $t2, $0, 2						#myBoard[myCoordinates] = 2
@@ -934,7 +824,7 @@ CHECKHIT:								#need 5 registers for printf statements, have to push stack
 			beq $a3, $0, CHECKHITNOTCOMPUTER	#if (whoami == 0)
 		#printf(player:)
 			li $v0, 4
-			la $a0, player 
+			la $a0, player
 			syscall
 			j CHECKHITPRINTHIT
 		CHECKHITNOTCOMPUTER:
@@ -954,17 +844,17 @@ CHECKHIT:								#need 5 registers for printf statements, have to push stack
 			CHECKHITLOOP:
 				beq $t3, $t4, CHECKHITLOOPEXIT 		#i<100
 				sll $t5, $t3, 2
-				add $t1, $s1, $t5 				
+				add $t1, $s1, $t5
 				lw $t1, 0($t1)						#herBoard[i]
 				beq $t1, $s0, CHECKHITISHIT			#herBoard[i] == herBoard[myCoordinates]-1
-			j CHECKHITISNOTHIT 
-		CHECKHITISHIT: 
+			j CHECKHITISNOTHIT
+		CHECKHITISHIT:
 			addi $t0, $t0, 1					#n++
-			j CHECKHITISNOTHIT 
+			j CHECKHITISNOTHIT
 		CHECKHITISNOTHIT:
-			addi $t3, $t3, 1 					#i++			
+			addi $t3, $t3, 1 					#i++
 			j CHECKHITLOOP
-		CHECKHITLOOPEXIT:	
+		CHECKHITLOOPEXIT:
 			beq $t0, $0, CHECKHITSUNK			#n==0
 			j CHECKHITNOTSUNK
 		CHECKHITSUNK:
@@ -982,7 +872,7 @@ CHECKHIT:								#need 5 registers for printf statements, have to push stack
 			j CHECKHITNOTSUNK
 		CHECKHITNOTSUNK:
 			addi $v0, $0, 2					#return 1
-			j CHECKHITEXIT		
+			j CHECKHITEXIT
 		CHECKHITELSE:
 			addi $v0, $0, 0						#return 0
 			j CHECKHITEXIT
@@ -991,7 +881,7 @@ CHECKHIT:								#need 5 registers for printf statements, have to push stack
 			lw $s1, 4($sp)
 			lw $s2, 8($sp)
 			addi $sp, $sp, 12
-			jr $ra 	#Return to main		
+			jr $ra 	#Return to main
 
 GETCOMPUTERCOORDINATES:
 	#Push stack
@@ -1015,7 +905,7 @@ GETCOMPUTERCOORDINATES:
 		div $s0, $t0
 		mfhi $t0 #i%2
 		addi $t1, $0, 10
-		mult $t0, $t1	
+		mult $t0, $t1
 		mflo $t1 #i%2  *10
 		addi $t0, $t0, -1
 		add $t0, $t0, $t1 #offset
@@ -1038,11 +928,11 @@ GETCOMPUTERCOORDINATES:
 		add $t0, $s2, $t0 #Location in memory
 		lw $t0, 0($t0) #value
 		beq $t0, $0, GETCOMPUTERCOORDINATESIEXIT
-		addi $t0, $0, 3 #for checking if i == 3	
+		addi $t0, $0, 3 #for checking if i == 3
 		bne $s0, $t0, GETCOMPUTERCOORDINATESIEND
 		j GETCOMPUTERCOORDINATESALOOP
 		GETCOMPUTERCOORDINATESALOOP:
-			addi $a0, $0, 99 #Max = 99 for rand number	
+			addi $a0, $0, 99 #Max = 99 for rand number
 			add $a1, $0, $0 #Min = 0
 			add $s4, $0, $ra #save return address
 			jal RANDNUMBER
@@ -1065,6 +955,3 @@ GETCOMPUTERCOORDINATES:
 	lw $s4, 16($sp)
 	addi $sp, $sp, 20
 		jr $ra #Return coordinates
-
-		
-
