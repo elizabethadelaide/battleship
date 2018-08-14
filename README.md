@@ -9,7 +9,7 @@ The game starts with the player setting two large numbers to establish the rando
 
 The player then places their own ships based on the ship size, and direction. The player has ship size 2, 4, 6 and 8, with corrseponding length. The ships can be placed anywhere on the board, and arranged N, E, S or W. The game will check if the ship fits on the board. After placing all the ships, the actual game will start.
 
-The player will call shots with a letter and number, such B4. The shot can be a hit and a miss. A hit on the computer side will be shown as a 2, and a miss will be shown as a 1. The computer will call shots as well. A hit on the player side will increase the player ships number by one (i.e. 2-> 3, 4->5), a miss will be shown as a 1. 
+The player will call shots with a letter and number, such B4. The shot can be a hit and a miss. A hit on the computer side will be shown as a 2, and a miss will be shown as a 1. The computer will call shots as well. A hit on the player side will increase the player ships number by one (i.e. 2-> 3, 4->5), a miss will be shown as a 1. The game will print when a ship is sunk, and will check if a shot has already been called.
 
 ## Sample Board
 
