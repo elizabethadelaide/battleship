@@ -1,3 +1,9 @@
+#Elizabeth Adelaide
+#Maggie Cao
+#Sheryan Resutov
+
+#Computer Architecture Final
+
 .data
 
 #String helpers
