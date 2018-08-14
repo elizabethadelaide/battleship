@@ -15,4 +15,4 @@ The player will call shots with a letter and number, such B4. The shot can be a 
 
 Ships on the player side are highlighted in green, with the singular hit on the player highlighted in red. The hits on the computer side are highlighted in purple.
 
-[!A battleship board](/images/sampleBoard.jpg)
+![A battleship board](/images/sampleBoard.JPG)
